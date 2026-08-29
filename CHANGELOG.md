@@ -16,9 +16,9 @@
 
 ### Features
 
-* first release ([adf9f5c](https://github.com/joaoqalves/chbedcl/commit/adf9f5c9aa4bf608caa98d0275f3ab5b89543b6f))
+* first release ([2ed3c0c](https://github.com/joaoqalves/chbedcl/commit/2ed3c0c40b7cdefece4a0ea871ca4fcfc1bbcf47))
 
 
 ### Bug Fixes
 
-* github token ([bfb7c24](https://github.com/joaoqalves/chbedcl/commit/bfb7c248774732571dbf23b8f87fadd531c22e5e))
+* github token ([e48e786](https://github.com/joaoqalves/chbedcl/commit/e48e786881887605e9c087bedac7041705278e3f))
