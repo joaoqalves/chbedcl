@@ -20,7 +20,14 @@ func readModel(path string) (string, error) {
 	return model, nil
 }
 
-func writeModel(path, model string) error {
+// awsEnv holds the AWS credentials context written into the settings.json
+// "env" block so Claude Code targets the same profile/region chbedcl used.
+type awsEnv struct {
+	Profile string
+	Region  string
+}
+
+func writeSettings(path, model string, aws awsEnv) error {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return err
@@ -32,6 +39,19 @@ func writeModel(path, model string) error {
 	}
 
 	settings["model"] = model
+
+	env, _ := settings["env"].(map[string]any)
+	if env == nil {
+		env = map[string]any{}
+	}
+	env["CLAUDE_CODE_USE_BEDROCK"] = "1"
+	if aws.Profile != "" {
+		env["AWS_PROFILE"] = aws.Profile
+	}
+	if aws.Region != "" {
+		env["AWS_REGION"] = aws.Region
+	}
+	settings["env"] = env
 
 	out, err := json.MarshalIndent(settings, "", "  ")
 	if err != nil {
@@ -49,10 +69,10 @@ func currentModel() (string, error) {
 	return readModel(path)
 }
 
-func updateModel(model string) error {
+func updateSettings(model string, aws awsEnv) error {
 	path, err := settingsPath()
 	if err != nil {
 		return err
 	}
-	return writeModel(path, model)
+	return writeSettings(path, model, aws)
 }

@@ -73,6 +73,8 @@ chbedcl --current
 3. Constructs cross-region inference profile IDs (e.g., `us.anthropic.claude-opus-5`)
 4. Caches results in `~/.claude/chbedcl-cache.json` for 48 hours
 5. Updates the `"model"` field in `~/.claude/settings.json`
+6. Syncs the `"env"` block so `AWS_PROFILE`/`AWS_REGION` match the resolved
+   profile/region and `CLAUDE_CODE_USE_BEDROCK` is set to `"1"`
 
 ## Requirements
 

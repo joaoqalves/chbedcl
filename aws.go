@@ -44,12 +44,12 @@ type foundationModel struct {
 	supportsInferenceProfile bool
 }
 
-type fetchResult struct {
+type modelResult struct {
 	Models []string
 	Region string
 }
 
-func fetchModels(opts Options) (fetchResult, error) {
+func fetchModels(opts Options) (modelResult, error) {
 	ctx := context.Background()
 
 	var cfgOpts []func(*config.LoadOptions) error
@@ -62,7 +62,7 @@ func fetchModels(opts Options) (fetchResult, error) {
 
 	cfg, err := config.LoadDefaultConfig(ctx, cfgOpts...)
 	if err != nil {
-		return fetchResult{}, err
+		return modelResult{}, err
 	}
 
 	client := bedrock.NewFromConfig(cfg)
@@ -71,7 +71,7 @@ func fetchModels(opts Options) (fetchResult, error) {
 		ByProvider: &provider,
 	})
 	if err != nil {
-		return fetchResult{}, err
+		return modelResult{}, err
 	}
 
 	region := cfg.Region
@@ -95,7 +95,7 @@ func fetchModels(opts Options) (fetchResult, error) {
 		})
 	}
 
-	return fetchResult{
+	return modelResult{
 		Models: parseFoundationModels(models, region),
 		Region: region,
 	}, nil

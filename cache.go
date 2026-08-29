@@ -68,18 +68,18 @@ func saveCache(region, profile string, models []string) error {
 	return saveCacheTo(path, region, profile, models)
 }
 
-func getModels(opts Options) ([]string, error) {
+func getModels(opts Options) (modelResult, error) {
 	if !opts.Refresh {
 		if models, ok := loadCache(opts.Region, opts.Profile); ok {
-			return models, nil
+			return modelResult{Models: models, Region: opts.Region}, nil
 		}
 	}
 
 	result, err := fetchModels(opts)
 	if err != nil {
-		return nil, err
+		return modelResult{}, err
 	}
 
 	_ = saveCache(result.Region, opts.Profile, result.Models)
-	return result.Models, nil
+	return result, nil
 }

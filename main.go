@@ -15,6 +15,24 @@ type Options struct {
 	OverrideDefaults bool
 }
 
+// promptMode controls whether resolveOpts may fall back to interactive TUI
+// prompts (profile picker, "save as default?") when options are ambiguous.
+type promptMode int
+
+const (
+	allowPrompts promptMode = iota
+	noPrompts
+)
+
+// promptModeFor picks the prompt mode for a run: JSON/headless output never
+// prompts, interactive output may.
+func promptModeFor(jsonOut bool) promptMode {
+	if jsonOut {
+		return noPrompts
+	}
+	return allowPrompts
+}
+
 func main() {
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, `chbedcl — change the Claude model in ~/.claude/settings.json
@@ -37,6 +55,10 @@ Output options:
 On first run, chbedcl prompts you to select an AWS profile and remembers
 your choice. Use --profile/--region to override, and --override-defaults
 to update the saved preference without a prompt.
+
+Setting a model also syncs the "env" block in settings.json so that
+AWS_PROFILE and AWS_REGION match the resolved profile/region and
+CLAUDE_CODE_USE_BEDROCK is set to "1".
 
 Examples:
   chbedcl                                         Pick a model interactively
@@ -75,7 +97,10 @@ Examples:
 	}
 
 	if *setFlag != "" {
-		if err := updateModel(*setFlag); err != nil {
+		if err := resolveOpts(&opts, noPrompts); err != nil {
+			fatal(opts.JSON, "%v", err)
+		}
+		if err := updateSettings(*setFlag, awsEnv{Profile: opts.Profile, Region: opts.Region}); err != nil {
 			fatal(opts.JSON, "updating settings: %v", err)
 		}
 		if opts.JSON {
@@ -86,25 +111,25 @@ Examples:
 		return
 	}
 
-	if err := resolveOpts(&opts); err != nil {
+	if err := resolveOpts(&opts, promptModeFor(opts.JSON)); err != nil {
 		fatal(opts.JSON, "%v", err)
 	}
 
-	models, err := getModels(opts)
+	result, err := getModels(opts)
 	if err != nil {
 		fatal(opts.JSON, "fetching models: %v", err)
 	}
 
-	if len(models) == 0 {
+	if len(result.Models) == 0 {
 		fatal(opts.JSON, "no Claude models found")
 	}
 
 	if *listFlag {
 		if opts.JSON {
 			cur, _ := currentModel()
-			printJSON(map[string]any{"models": models, "current": cur})
+			printJSON(map[string]any{"models": result.Models, "current": cur})
 		} else {
-			for _, m := range models {
+			for _, m := range result.Models {
 				fmt.Println(m)
 			}
 		}
@@ -112,7 +137,7 @@ Examples:
 	}
 
 	cur, _ := currentModel()
-	selected, err := pickModel(models, cur)
+	selected, err := pickModel(result.Models, cur)
 	if err != nil {
 		fatal(opts.JSON, "%v", err)
 	}
@@ -120,20 +145,20 @@ Examples:
 		return
 	}
 
-	if err := updateModel(selected); err != nil {
+	if err := updateSettings(selected, awsEnv{Profile: opts.Profile, Region: result.Region}); err != nil {
 		fatal(opts.JSON, "updating settings: %v", err)
 	}
 	fmt.Printf("Model set to: %s\n", selected)
 }
 
-func resolveOpts(opts *Options) error {
+func resolveOpts(opts *Options, mode promptMode) error {
 	prefs, _ := loadPrefs()
 	flagsProvided := opts.Profile != "" || opts.Region != ""
 
 	if opts.Profile == "" {
 		if prefs.Profile != "" {
 			opts.Profile = prefs.Profile
-		} else if !opts.JSON {
+		} else if mode == allowPrompts {
 			profiles, err := listAWSProfiles()
 			if err != nil {
 				return fmt.Errorf("listing AWS profiles: %w", err)
@@ -170,7 +195,7 @@ func resolveOpts(opts *Options) error {
 		return nil
 	}
 
-	if !opts.JSON && (opts.Profile != prefs.Profile || opts.Region != prefs.Region) {
+	if mode == allowPrompts && (opts.Profile != prefs.Profile || opts.Region != prefs.Region) {
 		save, err := pickFromList("Save as new default?", []string{"Yes", "No"})
 		if err != nil {
 			return err
