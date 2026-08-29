@@ -2,12 +2,16 @@
 
 Change the Claude model in `~/.claude/settings.json` by querying available models from AWS Bedrock.
 
+![demo](demo.gif)
+
 ## Install
 
 ### Homebrew
 
 ```sh
-brew install joaoqalves/tap/chbedcl
+brew tap joaoqalves/chbedcl https://github.com/joaoqalves/chbedcl.git
+brew trust --formula joaoqalves/chbedcl/chbedcl
+brew install chbedcl
 ```
 
 ### Go
