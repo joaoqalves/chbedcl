@@ -1,0 +1,33 @@
+version: 2
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+
+archives:
+  - format: tar.gz
+
+brews:
+  - repository:
+      owner: joaoqalves
+      name: chbedcl
+      token: "{{ .Env.HOMEBREW_TOKEN }}"
+    directory: Formula
+    homepage: https://github.com/joaoqalves/chbedcl
+    description: Change the Claude model in ~/.claude/settings.json
+    license: MIT
+    install: |
+      bin.install "chbedcl"
+    test: |
+      assert_match "chbedcl", shell_output("#{bin}/chbedcl --help 2>&1")
+
+changelog:
+  use: github-native
