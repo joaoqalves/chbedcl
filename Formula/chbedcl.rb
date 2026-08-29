@@ -5,21 +5,21 @@
 class Chbedcl < Formula
   desc "Change the Claude model in ~/.claude/settings.json"
   homepage "https://github.com/joaoqalves/chbedcl"
-  version "1.0.0"
+  version "1.1.0"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/joaoqalves/chbedcl/releases/download/v1.0.0/chbedcl_1.0.0_darwin_amd64.tar.gz"
-      sha256 "8735df1b3e841096bad34872db3a2c020429110c708d4f0cc47f45c0b4fa1959"
+      url "https://github.com/joaoqalves/chbedcl/releases/download/v1.1.0/chbedcl_1.1.0_darwin_amd64.tar.gz"
+      sha256 "090f67f54c3d63fa949349cebb420ab794ab5db6d93f2210d0ebac512539606a"
 
       define_method(:install) do
         bin.install "chbedcl"
       end
     end
     if Hardware::CPU.arm?
-      url "https://github.com/joaoqalves/chbedcl/releases/download/v1.0.0/chbedcl_1.0.0_darwin_arm64.tar.gz"
-      sha256 "8f9c67bedd8da0b2e9ae8b648d389069d516061039a59e3130912f23d767c693"
+      url "https://github.com/joaoqalves/chbedcl/releases/download/v1.1.0/chbedcl_1.1.0_darwin_arm64.tar.gz"
+      sha256 "bc11cb3e2f8ac4bf00168add5e23279b73bd72da7cf8194054973cbec16c4130"
 
       define_method(:install) do
         bin.install "chbedcl"
@@ -29,15 +29,15 @@ class Chbedcl < Formula
 
   on_linux do
     if Hardware::CPU.intel? && Hardware::CPU.is_64_bit?
-      url "https://github.com/joaoqalves/chbedcl/releases/download/v1.0.0/chbedcl_1.0.0_linux_amd64.tar.gz"
-      sha256 "5f04c9817da55c084b969a45fb8a5338c51c117eceae7dabccca1555dd708651"
+      url "https://github.com/joaoqalves/chbedcl/releases/download/v1.1.0/chbedcl_1.1.0_linux_amd64.tar.gz"
+      sha256 "3a428d0922183915a20e8f0c9c89d2a0a53e10c20bd63c2b4bcb42947645f326"
       define_method(:install) do
         bin.install "chbedcl"
       end
     end
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/joaoqalves/chbedcl/releases/download/v1.0.0/chbedcl_1.0.0_linux_arm64.tar.gz"
-      sha256 "22b6e76072d74bc445801397a351af26f4816ba393d5027bce10b6e8e8f6aedd"
+      url "https://github.com/joaoqalves/chbedcl/releases/download/v1.1.0/chbedcl_1.1.0_linux_arm64.tar.gz"
+      sha256 "a6a57ade5f62894897d487ca82efc81e61c8c7e1f226968c9d8fffdb8ad09840"
       define_method(:install) do
         bin.install "chbedcl"
       end
