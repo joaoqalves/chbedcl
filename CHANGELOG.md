@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/joaoqalves/chbedcl/compare/v1.0.0...v1.1.0) (2026-08-29)
+
+
+### Features
+
+* override region and profile ([8119500](https://github.com/joaoqalves/chbedcl/commit/811950097be67f0b34cb6e6b12d82693f613f082))
+
 ## 1.0.0 (2026-08-29)
 
 
